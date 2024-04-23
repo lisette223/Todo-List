@@ -8,28 +8,53 @@
 import UIKit
 
 class ToDoDetailsViewController: UIViewController {
-    var toDo = ToDo()
-
+    var toDoCD: ToDoCD?
     @IBOutlet weak var toDoLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if toDo.priority == 1{
-            toDoLabel.text = "❗️ " + toDo.name
+        // toDoLabel.text = toDoCD?.name
+        if let toDo = toDoCD {
+            if toDo.priority == 1{
+                if let name = toDo.name{
+                    toDoLabel.text = "❗️" + name
+                    
+                }
+            }
+            else if toDo.priority == 2{
+                if let name = toDo.name{
+                    toDoLabel.text = "‼️" + name
+                    
+                }
+            }
+            
+            else
+            {
+                if let name = toDo.name{
+                    toDoLabel.text = name
+                    
+                }
+            }
         }
-        else if toDo.priority == 2{
-            toDoLabel.text = "‼️ " + toDo.name
-        }
-        
-        else{
-            toDoLabel.text = toDo.name
-        }
-        // Do any additional setup after loading the view.
     }
+        
     
 
     @IBAction func doneTapped(_ sender: Any) {
+        
+    if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+        { if let toDo = toDoCD{
+            context.delete(toDo)
+            
+        }
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        
     }
+        navigationController?.popViewController(animated: true)
+        
+    }
+
+      
+    
     /*
     // MARK: - Navigation
 

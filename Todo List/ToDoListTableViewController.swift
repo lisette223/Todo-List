@@ -10,30 +10,55 @@ import UIKit
 class ToDoListTableViewController: UITableViewController {
 
     
-    var todolist:[ToDo] = []
+   // var todolist:[ToDo] = []
+    
+    var toDoCDs:[ToDoCD] = []
     override func viewDidLoad() {
         super.viewDidLoad()
-        let todo1 = ToDo()
-        todo1.name = "Write chapter one of iOS 14 book"
-        todo1.priority = 0
-        let todo2 = ToDo()
-        todo2.name = "Edit  iOS 14 book"
-        todo2.priority = 1
-        todolist = [todo1, todo2]
+//        let todo1 = ToDo()
+//        todo1.name = "Write chapter one of iOS 14 book"
+//        todo1.priority = 0
+//        let todo2 = ToDo()
+//        todo2.name = "Edit  iOS 14 book"
+//        todo2.priority = 1
+//        todolist = [todo1, todo2]
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        
     }
 
     // MARK: - Table view data source
 
- 
+    override func viewWillAppear(_ animated: Bool) {
+        getToDos()
+        
+    }
+    func getToDos(){
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let toDosFromCoreData = try? context.fetch(ToDoCD.fetchRequest()){
+                if let toDos = toDosFromCoreData as? [ToDoCD]
+                {
+                    toDoCDs = toDos
+                    
+                    tableView.reloadData()
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+
+   
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return todolist.count
+        return toDoCDs.count
     }
 
 
@@ -41,25 +66,32 @@ class ToDoListTableViewController: UITableViewController {
         
         let cell = UITableViewCell()
         
-        let selectedToDo = todolist[indexPath.row]
-        if selectedToDo.priority == 1
-        {
-            cell.textLabel?.text = "❗️" + selectedToDo.name
-        }
-        else if selectedToDo.priority == 2
-        {
-            cell.textLabel?.text = "‼️ " + selectedToDo.name
-        }
+        let selectedToDo = toDoCDs[indexPath.row]
+        if selectedToDo.priority == 1{
+            if let name = selectedToDo.name{
+                cell.textLabel?.text = "❗️" + name
+                
+            }
             
-        else{
-            cell.textLabel?.text =  selectedToDo.name
+        } else if
+            selectedToDo.priority == 2{
+            if let name = selectedToDo.name{
+                cell.textLabel?.text = "‼️" + name
+                
+            }
+            
         }
-        
-      
-      
+        else{
+            if let name = selectedToDo.name{ cell.textLabel?.text = name
+                
+            }
+            
+        }
         return cell
     }
-    
+        
+      
+
 
     /*
     // Override to support conditional editing of the table view.
@@ -105,15 +137,15 @@ class ToDoListTableViewController: UITableViewController {
         }
         
         if let detailsToDoViewController = segue.destination as? ToDoDetailsViewController{
-            if let selectedToDo = sender as? ToDo{
-                detailsToDoViewController.toDo = selectedToDo
+            if let selectedToDo = sender as? ToDoCD{
+                detailsToDoViewController.toDoCD = selectedToDo
             }
         }
     
         
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedToDo = todolist[indexPath.row]
+        let selectedToDo = toDoCDs[indexPath.row]
         performSegue(withIdentifier: "moveToDetails", sender: selectedToDo)
     }
 

@@ -18,20 +18,37 @@ class AddToDoViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    
+   
+
     @IBAction func addTapped(_ sender: UIButton) {
         
         
-        let newToDo = ToDo()
-        newToDo.priority = prioritySegment.selectedSegmentIndex
+//        let newToDo = ToDo()
+//        newToDo.priority = prioritySegment.selectedSegmentIndex
+//
+//        if let name = nameTextField.text{
+//            newToDo.name = name
+//        }
+//
+//        ToDoListTableViewController?.todolist.append(newToDo)
+//        ToDoListTableViewController?.tableView.reloadData()
+//        navigationController?.popViewController(animated: true)
+//
         
-        if let name = nameTextField.text{
-            newToDo.name = name
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext    {
+            
+            let newToDo = ToDoCD(context: context)
+            newToDo.priority = Int32(prioritySegment.selectedSegmentIndex)
+            if let name = nameTextField.text {
+                newToDo.name = name
+                
+            }
+            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            
         }
-        
-        ToDoListTableViewController?.todolist.append(newToDo)
-        ToDoListTableViewController?.tableView.reloadData()
         navigationController?.popViewController(animated: true)
+
+        
     }
     
     /*
